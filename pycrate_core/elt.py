@@ -2274,7 +2274,14 @@ class Envelope(Element):
             if not isinstance(val, list):
                 raise(EltErr('{0} [_from_jval]: invalid format, {1!r}'.format(self._name, val)))
             i = 0
+            val_len = len(val)
             for e in self._content:
+                # set element as transparent if there is no more elements in val
+                if i >= val_len and not e.get_trans():
+                    e.set_trans(True)
+                # if the element exists in val, change transparency if needed
+                if i < val_len and e.get_trans() and val[i]:
+                    e.set_trans(False)
                 if not e.get_trans():
                     try:
                         e._from_jval_wrap(val[i])
